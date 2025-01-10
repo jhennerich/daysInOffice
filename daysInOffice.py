@@ -7,11 +7,7 @@ def cal_time():
     print(months)
     print(calendar.month(2025, 1))
 
-import calendar
-
 def get_working_days(year, month):
-    """Gets working days in a given month, excluding weekends."""
-
     working_days = []
     cal = calendar.Calendar()
 
