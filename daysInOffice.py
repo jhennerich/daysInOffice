@@ -1,8 +1,15 @@
 import calendar
 import holidays
 from datetime import date
+import tkinter
+from tkinter import *
+from tkinter import ttk
+import sv_ttk
+from tkinter.filedialog import asksaveasfile
+from tkinter.filedialog import askopenfilename
 
-
+from PIL.ImageOps import expand
+from tkcalendar import Calendar
 
 def cal_time(year,month):
     months = []
@@ -29,6 +36,30 @@ def min_days_in_office(working_days):
        min_days = str(len(working_days) /2)
     return min_days
 
+def save_to_file():
+    file1 = asksaveasfile(initialfile='Untitled.txt',
+                          defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")])
+    #    file1 = open('./users.txt', "w")
+    """
+    for user in users:
+        file1.writelines(f'{user.uid}, {user.user_name}, {user.email}, {user.create_time}\n')
+    """
+    file1.close()
+
+
+def open_file():
+    filename = askopenfilename( defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")])
+    text1 = open(filename, 'r')
+    for line in text1:
+       """ 
+        line_array = line.split(',')
+        user_name = line_array[1]
+        email = line_array[2]
+
+        users.append(User(user_name, email))
+        """
+
+    text1.close()
 
 if __name__ == '__main__':
 
@@ -37,3 +68,52 @@ if __name__ == '__main__':
 
     working_days = get_working_days(runtime_date.year, runtime_date.month)
     print('Min days in office needed= ', min_days_in_office(working_days))
+
+
+    root = tkinter.Tk()
+    root.geometry("900x900")
+    root.maxsize(900, 750)
+    root.title("Days In Office Tracker")
+    root.config(bg="lightgrey")
+
+    menubar = tkinter.Menu(root)
+    filemenu = tkinter.Menu(menubar, tearoff=0)
+    filemenu.add_command(label="Open", command=open_file)
+    filemenu.add_command(label="Save", command=save_to_file)
+    filemenu.add_separator()
+    filemenu.add_command(label="Exit", command=root.quit)
+    menubar.add_cascade(label="File", menu=filemenu)
+
+    left_frame = Frame(root, width=200, height=200)
+#    left_frame = Frame(root)
+    left_frame.grid(row=0, column=0, padx=10, pady=5)
+
+    # right_frame = Frame(master, width=900, height=400)
+ #   right_frame = Frame(root)
+ #   right_frame.grid(row=1, column=0, padx=10, pady=5)
+
+    cal = Calendar(left_frame, selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
+    cal.pack()
+
+
+    def grad_date():
+        date.config(text="Selected Date is: " + cal.get_date())
+
+
+    # Add Button and Label
+    Button(left_frame, text="Get Date", command=grad_date).pack(pady=20)
+
+    date = Label(left_frame, text="")
+    date.pack(pady=20)
+
+
+#    display_button = Button(left_frame, text="Display Users", command=lambda: min_days_in_office(working_days), height=2, bg="dark grey")
+#    display_button.pack(pady=2, expand=True, side=LEFT)
+
+#    button = ttk.Button(root, text="Click me!")
+#    button.pack()
+
+    root.config(menu=menubar)
+
+#    sv_ttk.set_theme("dark")
+    root.mainloop()
