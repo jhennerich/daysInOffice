@@ -1,7 +1,7 @@
 import calendar
 import holidays
 from datetime import date
-import tkinter
+import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 import sv_ttk
@@ -70,14 +70,14 @@ if __name__ == '__main__':
     print('Min days in office needed= ', min_days_in_office(working_days))
 
 
-    root = tkinter.Tk()
+    root = tk.Tk()
     root.geometry("900x900")
     root.maxsize(900, 750)
     root.title("Days In Office Tracker")
     root.config(bg="lightgrey")
 
-    menubar = tkinter.Menu(root)
-    filemenu = tkinter.Menu(menubar, tearoff=0)
+    menubar = tk.Menu(root)
+    filemenu = tk.Menu(menubar, tearoff=0)
     filemenu.add_command(label="Open", command=open_file)
     filemenu.add_command(label="Save", command=save_to_file)
     filemenu.add_separator()
@@ -92,12 +92,13 @@ if __name__ == '__main__':
  #   right_frame = Frame(root)
  #   right_frame.grid(row=1, column=0, padx=10, pady=5)
 
-    cal = Calendar(left_frame, selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
-    cal.pack()
+#    cal = Calendar(left_frame,font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
+    cal = Calendar(left_frame,showothermonthdays=False, font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
+    cal.pack(fill="both", expand=True)
 
 
     def grad_date():
-        date.config(text="Selected Date is: " + cal.get_date())
+        date.config(text="Selected Date is: " + cal.get_date(),font="Arial 24")
 
 
     # Add Button and Label
@@ -106,8 +107,13 @@ if __name__ == '__main__':
     date = Label(left_frame, text="")
     date.pack(pady=20)
 
+    text_box = tk.Text(left_frame, height=5, width=30, font="Arial 24")
+    text_box.pack()
 
-#    display_button = Button(left_frame, text="Display Users", command=lambda: min_days_in_office(working_days), height=2, bg="dark grey")
+    # Inserting text
+    text_box.insert("1.0",  'Min days in office needed= ' + min_days_in_office(working_days))
+
+    #    display_button = Button(left_frame, text="Display Users", command=lambda: min_days_in_office(working_days), height=2, bg="dark grey")
 #    display_button.pack(pady=2, expand=True, side=LEFT)
 
 #    button = ttk.Button(root, text="Click me!")
