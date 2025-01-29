@@ -64,6 +64,9 @@ def open_file():
 def grad_date():
     date.config(text="Selected Date is: " + cal.get_date(),font="Arial 24")
 
+def insert_text(event):
+    text_box.insert("1.0",cal.get_date())
+
 if __name__ == '__main__':
 
     runtime_date = date.today()
@@ -98,9 +101,9 @@ if __name__ == '__main__':
 #    cal = Calendar(left_frame,font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
     cal = Calendar(left_frame, showothermonthdays=False, font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
     cal.pack(side=TOP, expand=True)
-
-
-
+    cal.calevent_create(date(2025,1,1), "New Years", 'holiday')
+    #calevent_create('1/1/2025', "New Years", tags=[])
+    cal.tag_config('holiday', background='red', foreground='red')
 
     # Add Button and Label
     Button(left_frame, text="Get Date", command=grad_date).pack(pady=20)
@@ -111,8 +114,10 @@ if __name__ == '__main__':
     text_box = tk.Text(left_frame, height=2, width=30, font="Arial 24")
     text_box.pack(side=BOTTOM, expand=True)
 
+    cal.bind("<<CalendarSelected>>", insert_text)
     # Inserting text
-    text_box.insert("1.0",  'Min days in office needed= ' + min_days_in_office(working_days))
+#    text_box.insert("1.0",  'Min days in office needed= ' + min_days_in_office(working_days))
+#    text_box.insert("1.0", cal.get_date())
 
     #    display_button = Button(left_frame, text="Display Users", command=lambda: min_days_in_office(working_days), height=2, bg="dark grey")
 #    display_button.pack(pady=2, expand=True, side=LEFT)
