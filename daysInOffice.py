@@ -61,6 +61,9 @@ def open_file():
 
     text1.close()
 
+def grad_date():
+    date.config(text="Selected Date is: " + cal.get_date(),font="Arial 24")
+
 if __name__ == '__main__':
 
     runtime_date = date.today()
@@ -72,9 +75,9 @@ if __name__ == '__main__':
 
     root = tk.Tk()
     root.geometry("900x900")
-    root.maxsize(900, 750)
+    root.maxsize(900, 900)
     root.title("Days In Office Tracker")
-    root.config(bg="lightgrey")
+    root.config(bg="light grey")
 
     menubar = tk.Menu(root)
     filemenu = tk.Menu(menubar, tearoff=0)
@@ -84,31 +87,29 @@ if __name__ == '__main__':
     filemenu.add_command(label="Exit", command=root.quit)
     menubar.add_cascade(label="File", menu=filemenu)
 
-    left_frame = Frame(root, width=200, height=200)
+    left_frame = Frame(root, width=500, height=500)
 #    left_frame = Frame(root)
     left_frame.grid(row=0, column=0, padx=10, pady=5)
 
-    # right_frame = Frame(master, width=900, height=400)
- #   right_frame = Frame(root)
- #   right_frame.grid(row=1, column=0, padx=10, pady=5)
+#    right_frame = Frame(root, width=900, height=400)
+#    right_frame = Frame(root)
+#    right_frame.grid(row=1, column=0, padx=10, pady=5)
 
 #    cal = Calendar(left_frame,font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
-    cal = Calendar(left_frame,showothermonthdays=False, font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
-    cal.pack(fill="both", expand=True)
+    cal = Calendar(left_frame, showothermonthdays=False, font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
+    cal.pack(side=TOP, expand=True)
 
 
-    def grad_date():
-        date.config(text="Selected Date is: " + cal.get_date(),font="Arial 24")
 
 
     # Add Button and Label
     Button(left_frame, text="Get Date", command=grad_date).pack(pady=20)
 
     date = Label(left_frame, text="")
-    date.pack(pady=20)
+    date.pack(side=TOP, pady=20)
 
-    text_box = tk.Text(left_frame, height=5, width=30, font="Arial 24")
-    text_box.pack()
+    text_box = tk.Text(left_frame, height=2, width=30, font="Arial 24")
+    text_box.pack(side=BOTTOM, expand=True)
 
     # Inserting text
     text_box.insert("1.0",  'Min days in office needed= ' + min_days_in_office(working_days))
