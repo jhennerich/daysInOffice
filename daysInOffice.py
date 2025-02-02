@@ -1,3 +1,5 @@
+import os
+import csv
 import calendar
 import holidays
 from datetime import date
@@ -48,18 +50,18 @@ def save_to_file():
 
 
 def open_file():
-    filename = askopenfilename( defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Documents", "*.txt")])
+    filename = askopenfilename( defaultextension=".csv", filetypes=[("All Files", "*.*"), ("CSV Documents", "*.csv")])
+    with open(filename, 'r') as csvfile:
+        csv_reader = csv.reader(csvfile, delimiter=',')
+        content = ""
+        for row in csv_reader:
+            content += ",".join(row) + "\n"
+"""            
     text1 = open(filename, 'r')
     for line in text1:
-       """ 
         line_array = line.split(',')
-        user_name = line_array[1]
-        email = line_array[2]
-
-        users.append(User(user_name, email))
-        """
-
     text1.close()
+"""
 
 def grad_date():
     date.config(text="Selected Date is: " + cal.get_date(),font="Arial 24")
@@ -102,6 +104,7 @@ if __name__ == '__main__':
     cal = Calendar(left_frame, showothermonthdays=False, font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
     cal.pack(side=TOP, expand=True)
     cal.calevent_create(date(2025,1,1), "New Years", 'holiday')
+    cal.calevent_create(date(2025,2,17), "Presidents Day", 'holiday')
     #calevent_create('1/1/2025', "New Years", tags=[])
     cal.tag_config('holiday', background='red', foreground='red')
 
