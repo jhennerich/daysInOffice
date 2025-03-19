@@ -19,8 +19,14 @@ def cal_time(year,month):
         months.append(calendar.month_name[i])
     return calendar.month(year, month)
 
-def get_working_days(year, month):
-    us_holidays = holidays.US()
+def load_vacation_sick_days():
+    vacation_sick_days = open_file()
+    return vacation_sick_days
+
+def load_holidays(year):
+    return holidays.country_holidays('US', years=year)
+
+def get_working_days(year, month, vacation_sick_days, us_holidays):
     working_days = []
     cal = calendar.Calendar()
 
@@ -28,7 +34,8 @@ def get_working_days(year, month):
         if day[0] != 0 and day[1] < 5:  # 0 is day of month, 1 is weekday (0-6, Mon-Sun)
             day_to_check = str(month) +'/' + str(day[0]) + '/' + str(year)
             if day_to_check not in us_holidays:
-                working_days.append(day[0])
+                if day_to_check not in str(vacation_sick_days):
+                    working_days.append(day[0])
     return working_days
 
 def min_days_in_office(working_days):
@@ -48,20 +55,15 @@ def save_to_file():
     """
     file1.close()
 
-
 def open_file():
     filename = askopenfilename( defaultextension=".csv", filetypes=[("All Files", "*.*"), ("CSV Documents", "*.csv")])
     with open(filename, 'r') as csvfile:
         csv_reader = csv.reader(csvfile, delimiter=',')
-        content = ""
+        date_array = []
         for row in csv_reader:
-            content += ",".join(row) + "\n"
-"""            
-    text1 = open(filename, 'r')
-    for line in text1:
-        line_array = line.split(',')
-    text1.close()
-"""
+            date_array += row
+        csvfile.close()
+    return date_array
 
 def grad_date():
     date.config(text="Selected Date is: " + cal.get_date(),font="Arial 24")
@@ -74,7 +76,10 @@ if __name__ == '__main__':
     runtime_date = date.today()
 #    print(cal_time(runtime_date.year,runtime_date.month))
 
-    working_days = get_working_days(runtime_date.year, runtime_date.month)
+    us_holidays = load_holidays(runtime_date.year)
+    vac_sick_days = load_vacation_sick_days()
+    working_days = get_working_days(runtime_date.year, runtime_date.month, vac_sick_days, us_holidays)
+
     print('Min days in office needed= ', min_days_in_office(working_days))
 
 
@@ -82,7 +87,7 @@ if __name__ == '__main__':
     root.geometry("900x900")
     root.maxsize(900, 900)
     root.title("Days In Office Tracker")
-    root.config(bg="light grey")
+    root.config(bg="dark grey")
 
     menubar = tk.Menu(root)
     filemenu = tk.Menu(menubar, tearoff=0)
@@ -103,10 +108,16 @@ if __name__ == '__main__':
 #    cal = Calendar(left_frame,font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
     cal = Calendar(left_frame, showothermonthdays=False, font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
     cal.pack(side=TOP, expand=True)
-    cal.calevent_create(date(2025,1,1), "New Years", 'holiday')
-    cal.calevent_create(date(2025,2,17), "Presidents Day", 'holiday')
+    for d in us_holidays:
+        cal.calevent_create(date(d.year,d.month,d.day), "Holiday", 'holiday')
+
+    for day in vac_sick_days:
+        date_array = day.split('/')
+        cal.calevent_create(date(int(date_array[2]),int(date_array[0]),int(date_array[1])), "Vacation Day", 'vacation')
+
     #calevent_create('1/1/2025', "New Years", tags=[])
     cal.tag_config('holiday', background='red', foreground='red')
+    cal.tag_config('vacation', background='white', foreground='white')
 
     # Add Button and Label
     Button(left_frame, text="Get Date", command=grad_date).pack(pady=20)
