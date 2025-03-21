@@ -1,14 +1,12 @@
-import os
-import csv
 import calendar
-import holidays
-from datetime import date
+import csv
 import tkinter as tk
+from datetime import date
 from tkinter import *
-from tkinter.filedialog import asksaveasfile
 from tkinter.filedialog import askopenfilename
-import pto_day
+from tkinter.filedialog import asksaveasfile
 
+import holidays
 from tkcalendar import Calendar
 
 from pto_day import PtoDay
@@ -29,18 +27,21 @@ def load_holidays(year):
 
 def get_working_days(year, month, vacation_sick_days, us_holidays):
     working_days = []
+    days_worked = []
     cal = calendar.Calendar()
+    for day in vacation_sick_days:
+        days_worked.append(day.day)
 
     for day in cal.itermonthdays2(year, month):
         if day[0] != 0 and day[1] < 5:  # 0 is day of month, 1 is weekday (0-6, Mon-Sun)
             day_to_check = str(month) +'/' + str(day[0]) + '/' + str(year)
             if day_to_check not in us_holidays:
-                if day_to_check not in str(vacation_sick_days):
+                if day[0] not in days_worked:
                     working_days.append(day[0])
     return working_days
 
 def min_days_in_office(working_days):
-    if (len(working_days) % 2):
+    if len(working_days) % 2:
        min_days = str((len(working_days) + 1) / 2)
     else:
        min_days = str(len(working_days) /2)
@@ -59,13 +60,12 @@ def save_to_file():
 def open_file():
     filename = askopenfilename( defaultextension=".csv", filetypes=[("All Files", "*.*"), ("CSV Documents", "*.csv")])
     with open(filename, 'r') as csvfile:
-        csv_reader = csv.DictReader(csvfile, fieldnames = ['date', 'type'])
-#        csv_reader = csv.DictReader(csvfile)
+        csv_reader = csv.DictReader(csvfile, skipinitialspace=True, fieldnames = ['date', 'day_type'])
         date_array = []
         for row in csv_reader:
             date = row['date']
-            type = row['type']
-            pto_day = PtoDay(date, type)
+            day_type = row['day_type']
+            pto_day = PtoDay(date, day_type)
             date_array.append(pto_day)
         csvfile.close()
     return date_array
@@ -114,13 +114,12 @@ if __name__ == '__main__':
     cal = Calendar(left_frame, showothermonthdays=False, font="Arial 24", selectmode='day', year=runtime_date.year, month=runtime_date.month, day=runtime_date.day)
     cal.pack(side=TOP, expand=True)
     for d in us_holidays:
-        cal.calevent_create(date(d.year,d.month,d.day), "Holiday", 'holiday')
+        cal.calevent_create(date(d.year,d.month,d.day), 'Holiday', 'holiday')
 
     for day in vac_sick_days:
-#        day_info = PtoDay(day[0], day[1])
-        cal.calevent_create(date(day.year,day.month,day.day), day.type, day.type)
+        cal.calevent_create(date(day.year,day.month,day.day), day.day_type,day.day_type)
 
-    #calevent_create('1/1/2025', "New Years", tags=[])
+
     cal.tag_config('holiday', background='red', foreground='red')
     cal.tag_config('pto', background='white', foreground='white')
     cal.tag_config('worked', background='green', foreground='green')
