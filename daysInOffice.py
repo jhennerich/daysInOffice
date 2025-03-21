@@ -59,10 +59,14 @@ def save_to_file():
 def open_file():
     filename = askopenfilename( defaultextension=".csv", filetypes=[("All Files", "*.*"), ("CSV Documents", "*.csv")])
     with open(filename, 'r') as csvfile:
-        csv_reader = csv.reader(csvfile, delimiter=',')
+        csv_reader = csv.DictReader(csvfile, fieldnames = ['date', 'type'])
+#        csv_reader = csv.DictReader(csvfile)
         date_array = []
         for row in csv_reader:
-            date_array += row
+            date = row['date']
+            type = row['type']
+            pto_day = PtoDay(date, type)
+            date_array.append(pto_day)
         csvfile.close()
     return date_array
 
@@ -113,12 +117,13 @@ if __name__ == '__main__':
         cal.calevent_create(date(d.year,d.month,d.day), "Holiday", 'holiday')
 
     for day in vac_sick_days:
-        day_info = PtoDay(day, 'pto')
-        cal.calevent_create(date(day_info.year,day_info.day,day_info.month), "Pto", 'pto')
+#        day_info = PtoDay(day[0], day[1])
+        cal.calevent_create(date(day.year,day.month,day.day), day.type, day.type)
 
     #calevent_create('1/1/2025', "New Years", tags=[])
     cal.tag_config('holiday', background='red', foreground='red')
     cal.tag_config('pto', background='white', foreground='white')
+    cal.tag_config('worked', background='green', foreground='green')
 
     # Add Button and Label
     Button(left_frame, text="Get Date", command=grad_date).pack(pady=20)
