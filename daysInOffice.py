@@ -1,8 +1,8 @@
+from tkinter import *
+import tkinter as tk
 import calendar
 import csv
-import tkinter as tk
 from datetime import date
-from tkinter import *
 from tkinter.filedialog import askopenfilename
 from tkinter.filedialog import asksaveasfile
 
